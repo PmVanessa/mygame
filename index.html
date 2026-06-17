@@ -667,6 +667,9 @@
         if (checkAndSavePB(taps)) {
             pbEl.textContent = `🏅 New personal best, ${playerName}!`;
             pbEl.style.display = 'block';
+            celebrationSound();
+            launchConfetti();
+            celebrationPlayed = true;
         }
 
         submitScore();
