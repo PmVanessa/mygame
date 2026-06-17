@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tap and Win — Live Leaderboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0f0f1a;
+            color: white;
+            min-height: 100vh;
+            padding: 40px 60px;
+        }
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 36px;
+        }
+        .header-left h1 { font-size: 3.2rem; font-weight: bold; }
+        .header-left .tagline { color: #aaa; font-size: 1.1rem; margin-top: 6px; }
+        .header-right { text-align: right; }
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 107, 0, 0.15);
+            border: 1px solid #FF6B00;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #FF6B00;
+            margin-bottom: 10px;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #FF6B00;
+            border-radius: 50%;
+            animation: blink 1.2s ease-in-out infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+        .announce-text { color: #555; font-size: 0.9rem; }
+        .countdown-display { color: #FF6B00; font-size: 1rem; font-weight: bold; margin-top: 4px; }
+
+        /* ── Prize Strip ── */
+        .prize-strip {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+        .prize-card {
+            background: #1e1e2e;
+            border: 1px solid #2a2a3e;
+            border-radius: 12px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .prize-card.highlight { border-color: rgba(255, 107, 0, 0.5); background: rgba(255, 107, 0, 0.07); }
+        .prize-card-medals { font-size: 1.8rem; flex-shrink: 0; }
+        .prize-card-title { font-size: 1.05rem; font-weight: bold; }
+        .prize-card-desc { color: #aaa; font-size: 0.88rem; margin-top: 4px; line-height: 1.4; }
+
+        /* ── Leaderboard ── */
+        .lb-col-headers {
+            display: flex;
+            padding: 0 20px 10px;
+            color: #555;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .col-rank { width: 70px; }
+        .col-player { flex: 1; }
+        .col-score { width: 160px; text-align: right; }
+
+        .lb-row {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: #1e1e2e;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #2a2a3e;
+            transition: border-color 0.4s;
+        }
+        .lb-row.prize { border-color: rgba(255, 107, 0, 0.35); }
+        .lb-row.gold { background: rgba(255, 107, 0, 0.1); border-color: #FF6B00; }
+
+        .lb-rank { width: 70px; font-size: 1.9rem; }
+        .lb-info { flex: 1; }
+        .lb-name { font-size: 1.25rem; font-weight: bold; }
+        .lb-location { color: #555; font-size: 0.85rem; margin-top: 2px; }
+        .lb-prize-tag {
+            display: inline-block;
+            margin-top: 5px;
+            background: rgba(255, 107, 0, 0.15);
+            border: 1px solid rgba(255, 107, 0, 0.4);
+            color: #FF6B00;
+            font-size: 0.72rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .lb-score-col { width: 160px; text-align: right; }
+        .lb-score { font-size: 2.2rem; font-weight: bold; color: #FF6B00; line-height: 1; }
+        .lb-taps-label { color: #555; font-size: 0.82rem; margin-top: 2px; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #555;
+            font-size: 1.2rem;
+        }
+
+        /* ── Mobile responsive ── */
+        @media (max-width: 768px) {
+            body { padding: 20px; }
+            .header { flex-direction: column; gap: 12px; margin-bottom: 20px; }
+            .header-left h1 { font-size: 2rem; }
+            .header-right { text-align: left; }
+            .prize-strip { grid-template-columns: 1fr; margin-bottom: 20px; }
+            .lb-row { padding: 14px 14px; }
+            .lb-rank { width: 44px; font-size: 1.4rem; }
+            .lb-name { font-size: 1rem; }
+            .lb-score { font-size: 1.6rem; }
+            .lb-col-headers { padding: 0 14px 8px; }
+            .col-rank { width: 44px; }
+            .col-score { width: 100px; }
+            .lb-score-col { width: 100px; }
+            .cta { flex-direction: column; gap: 8px; text-align: center; }
+            .cta-right { text-align: center; }
+        }
+
+        /* ── CTA ── */
+        .cta {
+            margin-top: 36px;
+            padding: 22px 30px;
+            background: #1e1e2e;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cta-left { font-size: 1.2rem; color: #aaa; }
+        .cta-left strong { color: white; }
+        .cta-right { color: #555; font-size: 0.85rem; text-align: right; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <h1>Tap and Win 🎮</h1>
+            <div class="tagline">Who has the fastest fingers today?</div>
+        </div>
+        <div class="header-right">
+            <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+            <div class="announce-text">Winner announced end of day</div>
+            <div class="countdown-display" id="countdown-display">—</div>
+        </div>
+    </div>
+
+    <div class="prize-strip">
+        <div class="prize-card highlight">
+            <div class="prize-card-medals">🥇🥈🥉</div>
+            <div>
+                <div class="prize-card-title">Top 3 Winners</div>
+                <div class="prize-card-desc">15% discount + Free digital marketing strategy session</div>
+            </div>
+        </div>
+        <div class="prize-card">
+            <div class="prize-card-medals">4️⃣</div>
+            <div>
+                <div class="prize-card-title">4th Place</div>
+                <div class="prize-card-desc">Free digital marketing strategy session</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lb-col-headers">
+        <div class="col-rank">Rank</div>
+        <div class="col-player">Player</div>
+        <div class="col-score">Score</div>
+    </div>
+
+    <div id="leaderboard">
+        <div class="empty-state">Loading leaderboard...</div>
+    </div>
+
+    <div class="cta">
+        <div class="cta-left"><strong>Think you can beat them?</strong> Step up and play now! <a id="play-link" href="vanessa-game.html" style="color:#FF6B00;font-weight:bold;text-decoration:none;margin-left:8px;">→ Play</a></div>
+        <div class="cta-right">Refreshes every 30 seconds<br>June 27, 2026</div>
+    </div>
+
+<script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxleIe1bQIyz8kA6GPniiz6aEAyAXTW4uKkmHRII8ox3dLrGFr-LGmeJGu9gXgrPc3cQA/exec';
+    const ANNOUNCE_DATE = new Date('2026-06-27T23:59:59+01:00'); // 23:59:59 BST (UK)
+
+    const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6th', '7th', '8th', '9th', '10th'];
+    const prizeTags = [
+        '15% OFF + FREE STRATEGY SESSION',
+        '15% OFF + FREE STRATEGY SESSION',
+        '15% OFF + FREE STRATEGY SESSION',
+        'FREE STRATEGY SESSION',
+    ];
+
+    function updateCountdown() {
+        const now = new Date();
+        const diff = ANNOUNCE_DATE - now;
+        const el = document.getElementById('countdown-display');
+
+        if (diff <= 0) {
+            el.textContent = '🏆 Winners announced!';
+            switchToGloryMode();
+            return;
+        }
+
+        const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+        el.textContent = days > 0
+            ? `${days}d ${hours}h ${mins}m ${secs}s until announcement`
+            : `${hours}h ${mins}m ${secs}s until announcement`;
+    }
+
+    function switchToGloryMode() {
+        // Only switch once
+        if (document.getElementById('prize-strip').dataset.glory) return;
+        document.getElementById('prize-strip').dataset.glory = '1';
+
+        document.getElementById('prize-strip').innerHTML = `
+            <div class="prize-card highlight" style="grid-column:1/-1;">
+                <div class="prize-card-medals">🏆</div>
+                <div>
+                    <div class="prize-card-title">Winners have been announced — but the competition never stops!</div>
+                    <div class="prize-card-desc">Keep tapping, keep competing. Who's the fastest fingers in the room?</div>
+                </div>
+            </div>`;
+
+        document.querySelector('.cta-left').innerHTML =
+            '<strong>Still hungry?</strong> Keep playing — bragging rights are forever.';
+    }
+
+    function loadLeaderboard() {
+        fetch(SHEET_URL)
+            .then(res => res.json())
+            .then(data => {
+                // Deduplicate by email — keep best score
+                const best = {};
+                data.slice(1).forEach(row => {
+                    if (!row[0]) return;
+                    const email = row[2];
+                    if (!best[email] || row[1] > best[email][1]) best[email] = row;
+                });
+
+                const rows = Object.values(best).sort((a, b) => b[1] - a[1]).slice(0, 10);
+                const el = document.getElementById('leaderboard');
+
+                if (!rows.length) {
+                    el.innerHTML = '<div class="empty-state">No scores yet — be the first to play! 🎮</div>';
+                    return;
+                }
+
+                el.innerHTML = rows.map((row, i) => `
+                    <div class="lb-row ${i === 0 ? 'gold' : i < 4 ? 'prize' : ''}">
+                        <div class="lb-rank">${medals[i] || (i + 1)}</div>
+                        <div class="lb-info">
+                            <div class="lb-name">${row[0] || 'Anonymous'}</div>
+                            ${row[3] && row[3] !== 'N/A' ? `<div class="lb-location">${row[3]}</div>` : ''}
+                            ${prizeTags[i] ? `<div class="lb-prize-tag">${prizeTags[i]}</div>` : ''}
+                        </div>
+                        <div class="lb-score-col">
+                            <div class="lb-score">${row[1]}</div>
+                            <div class="lb-taps-label">taps</div>
+                        </div>
+                    </div>
+                `).join('');
+            })
+            .catch(() => {
+                document.getElementById('leaderboard').innerHTML =
+                    '<div class="empty-state">Could not load scores. Refreshing soon...</div>';
+            });
+    }
+
+    loadLeaderboard();
+    updateCountdown();
+    setInterval(loadLeaderboard, 30000);
+    setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
