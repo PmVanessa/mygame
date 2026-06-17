@@ -10,7 +10,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: #0f0f1a;
+            background: radial-gradient(ellipse at 50% 10%, #1c1c2e 0%, #0f0f1a 60%);
             color: white;
             min-height: 100vh;
             padding: 20px;
@@ -159,17 +159,21 @@
         .tap-rate { color: #555; font-size: 0.82rem; margin-top: 6px; min-height: 18px; transition: color 0.2s; }
         .tap-rate.hot { color: #FF6B00; font-weight: bold; }
 
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 0 45px rgba(255, 107, 0, 0.5), 0 0 90px rgba(255, 107, 0, 0.15), 0 8px 24px rgba(0,0,0,0.5); }
+            50%       { box-shadow: 0 0 80px rgba(255, 107, 0, 0.8), 0 0 160px rgba(255, 107, 0, 0.3), 0 8px 24px rgba(0,0,0,0.5); }
+        }
         .tap-btn {
             width: 190px;
             height: 190px;
             border-radius: 50%;
             background: linear-gradient(145deg, #FF6B00, #cc4400);
-            border: 4px solid rgba(255, 107, 0, 0.3);
+            border: 4px solid rgba(255, 107, 0, 0.4);
             color: white;
             font-size: 1.8rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(255, 107, 0, 0.35), 0 8px 20px rgba(0,0,0,0.4);
+            animation: btnPulse 2s ease-in-out infinite;
             transition: transform 0.05s, box-shadow 0.05s;
             margin: 0 auto;
             display: block;
@@ -179,6 +183,7 @@
         }
         .tap-btn:active {
             transform: scale(0.91);
+            animation: none;
             box-shadow: 0 0 15px rgba(255, 107, 0, 0.2), 0 4px 10px rgba(0,0,0,0.3);
         }
 
@@ -218,8 +223,9 @@
             font-size: 0.95rem;
             line-height: 1.6;
         }
+        .rank-badge.gold    { background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,140,0,0.08)); border: 1px solid #FFD700; color: #FFD700; }
         .rank-badge.winning { background: rgba(255, 107, 0, 0.15); border: 1px solid #FF6B00; }
-        .rank-badge.losing { background: #1e1e2e; border: 1px solid #2a2a3e; color: #aaa; }
+        .rank-badge.losing  { background: #1e1e2e; border: 1px solid #2a2a3e; color: #aaa; }
 
         /* ── Leaderboard ── */
         .lb-title {
@@ -251,7 +257,8 @@
         .lb-taps { color: #555; font-size: 0.73rem; }
 
         .saving-msg { color: #555; font-size: 0.82rem; margin-bottom: 12px; }
-        .subtitle { color: #aaa; font-size: 0.95rem; margin-bottom: 14px; margin-top: 4px; }
+        .subtitle { color: #aaa; font-size: 0.95rem; margin-bottom: 10px; margin-top: 4px; }
+        .brand-mark { display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 16px; color: #444; font-size: 0.75rem; letter-spacing: 0.5px; }
 
         /* ── Small screen adjustments ── */
         @media (max-width: 360px) {
@@ -292,13 +299,28 @@
     <!-- Screen 1: Register -->
     <div class="screen active" id="screen-register">
         <h1>Tap and Win 🎮</h1>
-        <p class="subtitle">15 seconds. Fastest fingers win.</p>
+        <p class="subtitle">15 seconds. That's all you get.</p>
+
+        <div class="brand-mark">
+            <svg viewBox="0 0 48 58" width="22" height="26" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="upg" x1="0.1" y1="0.9" x2="0.9" y2="0.1"><stop offset="0%" stop-color="#FF3A00"/><stop offset="100%" stop-color="#FFAB00"/></linearGradient></defs>
+                <rect x="10" y="2" width="8" height="12" rx="4" fill="url(#upg)"/>
+                <rect x="30" y="2" width="8" height="12" rx="4" fill="url(#upg)"/>
+                <rect x="2" y="10" width="44" height="42" rx="12" fill="url(#upg)"/>
+                <circle cx="24" cy="33" r="13" fill="none" stroke="white" stroke-width="2.2" opacity="0.3"/>
+                <circle cx="24" cy="33" r="8.5" fill="none" stroke="white" stroke-width="2.2" opacity="0.55"/>
+                <circle cx="24" cy="33" r="4" fill="none" stroke="white" stroke-width="2.2" opacity="0.85"/>
+                <circle cx="24" cy="33" r="1.8" fill="white"/>
+                <line x1="24" y1="52" x2="24" y2="58" stroke="#FF8000" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <span>by Unedited Plug</span>
+        </div>
 
         <div class="info-strip leader-strip" id="leader-strip"></div>
         <div class="info-strip pb-strip" id="pb-strip"></div>
 
         <div class="prize-box" id="prize-box">
-            <div class="prize-box-title" id="prize-box-title">🏆 Prizes — <span id="prize-countdown">Announced End of Day</span></div>
+            <div class="prize-box-title" id="prize-box-title">🏆 Prizes: <span id="prize-countdown">Announced End of Day</span></div>
             <div id="prize-rows">
                 <div class="prize-row">
                     <span class="prize-medal">🥇🥈🥉</span>
@@ -316,7 +338,7 @@
         <p id="welcomeMsg" style="color:#FF6B00;font-size:0.82rem;margin-top:2px;min-height:18px;display:none;text-align:left;padding-left:4px;"></p>
         <input type="text" id="playerCity" placeholder="Your Location (optional)">
         <p id="formError" style="color:#ff4444;font-size:0.85rem;margin-top:8px;min-height:20px;"></p>
-        <button class="btn btn-orange" onclick="startFromForm()">START GAME</button>
+        <button class="btn btn-orange" onclick="startFromForm()">LET'S GO</button>
     </div>
 
     <!-- Screen 2: Countdown -->
@@ -355,7 +377,7 @@
         <div id="leaderboard-list">Loading...</div>
 
         <button class="btn btn-orange" onclick="playAgain()" style="margin-top:18px;">PLAY AGAIN</button>
-        <button class="btn btn-outline" onclick="loadLeaderboard()">REFRESH BOARD</button>
+        <button class="btn btn-outline" onclick="loadLeaderboard()">REFRESH</button>
         <p style="margin-top:16px;">
             <a onclick="newPlayer()" style="color:#555;font-size:0.85rem;cursor:pointer;text-decoration:none;">
                 ← New player? Start here
@@ -508,7 +530,7 @@
             if (!rows.length) return;
             const top = rows[0];
             const el = document.getElementById('leader-strip');
-            el.innerHTML = `🏆 Current leader: <strong>${esc(top[0])}</strong> with <strong>${top[1]} taps</strong> — can you beat it?`;
+            el.innerHTML = `🏆 Current leader: <strong>${esc(top[0])}</strong> with <strong>${top[1]} taps</strong>. Can you beat it?`;
             el.style.display = 'block';
         }).catch(() => {});
     }
@@ -566,6 +588,7 @@
     // ── Countdown ──
     function runCountdown() {
         showScreen('screen-countdown');
+        document.querySelector('.get-ready').textContent = `Get ready, ${playerName}…`;
         let count = 3;
         const el = document.getElementById('countdown-number');
         el.textContent = count;
@@ -642,7 +665,7 @@
         setTimeout(() => { resultCooldown = false; }, 800);
         document.getElementById('finalScore').textContent = taps;
         document.getElementById('savingMsg').textContent = `Locking in your score, ${playerName}…`;
-        document.getElementById('rankBadge').textContent = `Hang on, ${playerName} — fetching your rank…`;
+        document.getElementById('rankBadge').textContent = `Hang on, ${playerName}. Fetching your rank…`;
         document.getElementById('rankBadge').className = 'rank-badge losing';
         const pbEl = document.getElementById('newPb');
         pbEl.style.display = 'none';
@@ -665,7 +688,7 @@
         }).then(() => {
             document.getElementById('savingMsg').textContent = `✓ Got it, ${playerName}! Score is on the board.`;
         }).catch(() => {
-            document.getElementById('savingMsg').textContent = `Couldn't save right now — check your connection.`;
+            document.getElementById('savingMsg').textContent = `Couldn't save right now. Check your connection.`;
         });
     }
 
@@ -676,7 +699,7 @@
         fetch(SHEET_URL).then(r => r.json()).then(data => {
             const rows = dedup(data).slice(0, 10);
             if (!rows.length) {
-                el.innerHTML = '<p style="color:#555;text-align:center;padding:16px">No scores yet — be the first!</p>';
+                el.innerHTML = '<p style="color:#555;text-align:center;padding:16px">No scores yet. Be the first!</p>';
                 updateRankBadge([], myFinalScore);
                 return;
             }
@@ -707,12 +730,12 @@
         const n = esc(playerName);
         const rank = rows.filter(r => r[1] > myScore).length + 1;
         if (rank <= 3) {
-            badge.className = 'rank-badge winning';
+            badge.className = rank === 1 ? 'rank-badge gold' : 'rank-badge winning';
             badge.innerHTML = rank === 1
-                ? `🔥 YES, ${n}! You're sitting at <strong>#1</strong> — nobody can touch you right now.`
+                ? `🔥 YES, ${n}! You're sitting at <strong>#1</strong>. Nobody can touch you right now.`
                 : rank === 2
-                ? `🎉 ${n}, you're <strong>#2</strong>! You're in prize territory — don't let anyone sneak past!`
-                : `🎉 ${n}, you're <strong>#3</strong>! Prize position locked — can you climb even higher?`;
+                ? `🎉 ${n}, you're <strong>#2</strong>! You're in prize territory. Don't let anyone sneak past!`
+                : `🎉 ${n}, you're <strong>#3</strong>! Prize position locked. Can you climb even higher?`;
             if (!celebrationPlayed) {
                 celebrationSound(); launchConfetti(); celebrationPlayed = true;
             }
@@ -720,8 +743,8 @@
             const needed = rows[2] ? rows[2][1] - myScore + 1 : 1;
             badge.className = 'rank-badge losing';
             badge.innerHTML = rank === 4
-                ? `${n}, SO close! You're <strong>#4</strong> — just <strong>${needed} more taps</strong> to steal 3rd place. Go again!`
-                : `Come on, ${n}! You're <strong>#${rank}</strong> — <strong>${needed} more taps</strong> between you and a prize. You've got this!`;
+                ? `${n}, SO close! You're <strong>#4</strong>. Just <strong>${needed} more taps</strong> to steal 3rd place. Go again!`
+                : `Come on, ${n}! You're <strong>#${rank}</strong>. Only <strong>${needed} more taps</strong> between you and a prize. You've got this!`;
         }
     }
 
@@ -765,7 +788,7 @@
                 document.getElementById('prize-rows').innerHTML = `
                     <div class="prize-row">
                         <span class="prize-medal">🏆</span>
-                        <span class="prize-desc"><strong>Winners announced!</strong> But the leaderboard lives on — keep playing for glory and bragging rights.</span>
+                        <span class="prize-desc"><strong>Winners announced!</strong> But the leaderboard lives on. Keep playing for glory and bragging rights.</span>
                     </div>`;
             }
             return;

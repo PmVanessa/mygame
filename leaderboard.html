@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tap and Win — Live Leaderboard</title>
+    <title>Tap and Win: Live Leaderboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
     <style>
@@ -10,7 +10,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: #0f0f1a;
+            background: radial-gradient(ellipse at 50% 0%, #1c1c2e 0%, #0f0f1a 55%);
             color: white;
             min-height: 100vh;
             padding: 40px 60px;
@@ -166,11 +166,25 @@
         <div class="header-left">
             <h1>Tap and Win 🎮</h1>
             <div class="tagline">Who has the fastest fingers today?</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;opacity:0.45;">
+                <svg viewBox="0 0 48 58" width="20" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="upg" x1="0.1" y1="0.9" x2="0.9" y2="0.1"><stop offset="0%" stop-color="#FF3A00"/><stop offset="100%" stop-color="#FFAB00"/></linearGradient></defs>
+                    <rect x="10" y="2" width="8" height="12" rx="4" fill="url(#upg)"/>
+                    <rect x="30" y="2" width="8" height="12" rx="4" fill="url(#upg)"/>
+                    <rect x="2" y="10" width="44" height="42" rx="12" fill="url(#upg)"/>
+                    <circle cx="24" cy="33" r="13" fill="none" stroke="white" stroke-width="2.2" opacity="0.3"/>
+                    <circle cx="24" cy="33" r="8.5" fill="none" stroke="white" stroke-width="2.2" opacity="0.55"/>
+                    <circle cx="24" cy="33" r="4" fill="none" stroke="white" stroke-width="2.2" opacity="0.85"/>
+                    <circle cx="24" cy="33" r="1.8" fill="white"/>
+                    <line x1="24" y1="52" x2="24" y2="58" stroke="#FF8000" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <span style="color:white;font-size:0.82rem;letter-spacing:0.5px;">Unedited Plug</span>
+            </div>
         </div>
         <div class="header-right">
             <div class="live-badge"><span class="live-dot"></span> LIVE</div>
             <div class="announce-text">Winner announced end of day</div>
-            <div class="countdown-display" id="countdown-display">—</div>
+            <div class="countdown-display" id="countdown-display"></div>
         </div>
     </div>
 
@@ -202,7 +216,7 @@
     </div>
 
     <div class="cta">
-        <div class="cta-left"><strong>Think you can beat them?</strong> Step up and play now! <a id="play-link" href="vanessa-game.html" style="color:#FF6B00;font-weight:bold;text-decoration:none;margin-left:8px;">→ Play</a></div>
+        <div class="cta-left"><strong>Think you can beat them?</strong> Scan the QR code and go prove it. <a id="play-link" href="vanessa-game.html" style="color:#FF6B00;font-weight:bold;text-decoration:none;margin-left:8px;">→ Play</a></div>
         <div class="cta-right">Refreshes every 30 seconds<br>June 27, 2026</div>
     </div>
 
@@ -248,20 +262,20 @@
             <div class="prize-card highlight" style="grid-column:1/-1;">
                 <div class="prize-card-medals">🏆</div>
                 <div>
-                    <div class="prize-card-title">Winners have been announced — but the competition never stops!</div>
+                    <div class="prize-card-title">Winners have been announced. The competition never stops!</div>
                     <div class="prize-card-desc">Keep tapping, keep competing. Who's the fastest fingers in the room?</div>
                 </div>
             </div>`;
 
         document.querySelector('.cta-left').innerHTML =
-            '<strong>Still hungry?</strong> Keep playing — bragging rights are forever.';
+            '<strong>Still hungry?</strong> Keep playing. Bragging rights are forever.';
     }
 
     function loadLeaderboard() {
         fetch(SHEET_URL)
             .then(res => res.json())
             .then(data => {
-                // Deduplicate by email — keep best score
+                // Deduplicate by email, keep best score
                 const best = {};
                 data.slice(1).forEach(row => {
                     if (!row[0]) return;
@@ -273,7 +287,7 @@
                 const el = document.getElementById('leaderboard');
 
                 if (!rows.length) {
-                    el.innerHTML = '<div class="empty-state">No scores yet — be the first to play! 🎮</div>';
+                    el.innerHTML = '<div class="empty-state">No scores yet. Be the first to play! 🎮</div>';
                     return;
                 }
 
