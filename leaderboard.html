@@ -2,8 +2,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tap and Win: Live Leaderboard</title>
+    <title>Tap and Win: Live Leaderboard — Unedited Plug</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Live leaderboard for the Tap and Win exhibition game by Unedited Plug.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://uptapgame.vercel.app/leaderboard.html">
+    <meta property="og:title" content="Tap and Win: Live Leaderboard — Unedited Plug">
+    <meta property="og:description" content="Live leaderboard for the Tap and Win exhibition game by Unedited Plug.">
+    <meta property="og:image" content="https://uptapgame.vercel.app/up-icon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Tap and Win: Live Leaderboard — Unedited Plug">
+    <meta name="twitter:description" content="Live leaderboard for the Tap and Win exhibition game by Unedited Plug.">
+    <meta name="twitter:image" content="https://uptapgame.vercel.app/up-icon.png">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -182,15 +192,19 @@
         <div class="prize-card highlight">
             <div class="prize-card-medals">🥇🥈🥉</div>
             <div>
-                <div class="prize-card-title">Top 3 Winners</div>
-                <div class="prize-card-desc">15% off Unedited Plug + Free digital marketing strategy session</div>
+                <div class="prize-card-title">Top 3 Prizes</div>
+                <div class="prize-card-desc">
+                    🥇 15% off + Digital marketing audit session<br>
+                    🥈 15% off + Digital marketing consultation<br>
+                    🥉 15% off Unedited Plug
+                </div>
             </div>
         </div>
         <div class="prize-card">
             <div class="prize-card-medals">4️⃣</div>
             <div>
                 <div class="prize-card-title">4th Place</div>
-                <div class="prize-card-desc">Free digital marketing strategy session with Unedited Plug</div>
+                <div class="prize-card-desc">Free digital marketing consultation with Unedited Plug</div>
             </div>
         </div>
     </div>
@@ -216,10 +230,10 @@
 
     const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6th', '7th', '8th', '9th', '10th'];
     const prizeTags = [
-        '15% OFF UNEDITED PLUG + FREE STRATEGY SESSION',
-        '15% OFF UNEDITED PLUG + FREE STRATEGY SESSION',
-        '15% OFF UNEDITED PLUG + FREE STRATEGY SESSION',
-        'FREE STRATEGY SESSION W/ UNEDITED PLUG',
+        '15% OFF + DIGITAL MARKETING AUDIT SESSION',
+        '15% OFF + DIGITAL MARKETING CONSULTATION',
+        '15% OFF UNEDITED PLUG',
+        'FREE DIGITAL MARKETING CONSULTATION',
     ];
 
     function updateCountdown() {
