@@ -381,6 +381,7 @@
         <div class="result-unit">times in 15 seconds</div>
 
         <div class="new-pb" id="newPb">🏅 New personal best!</div>
+        <div id="playCount" style="color:#555;font-size:0.82rem;margin-bottom:8px;min-height:18px;"></div>
         <div id="rankBadge" class="rank-badge losing">Checking your rank...</div>
         <p class="saving-msg" id="savingMsg">Saving your score...</p>
 
@@ -712,6 +713,13 @@
         el.innerHTML = 'Loading...';
         fetch(SHEET_URL).then(r => r.json()).then(data => {
             const rows = dedup(data).slice(0, 10);
+
+            // Show play count for current player
+            const myRow = data.slice(1).find(r => r[2] && r[2].toLowerCase().trim() === playerEmail.toLowerCase().trim());
+            const plays = Math.max(Number(myRow?.[4]) || 0, 1);
+            const pcEl = document.getElementById('playCount');
+            if (pcEl) pcEl.textContent = `🎮 You've played ${plays} time${plays === 1 ? '' : 's'}`;
+
             if (!rows.length) {
                 el.innerHTML = '<p style="color:#555;text-align:center;padding:16px">No scores yet. Be the first!</p>';
                 updateRankBadge([], myFinalScore);
@@ -782,6 +790,7 @@
         document.getElementById('playerEmail').value = '';
         document.getElementById('playerCity').value = '';
         document.getElementById('formError').textContent = '';
+        document.getElementById('playCount').textContent = '';
         refreshPbStrip();
         showScreen('screen-register');
     }

@@ -306,6 +306,7 @@
                         <div class="lb-score-col">
                             <div class="lb-score">${row[1]}</div>
                             <div class="lb-taps-label">taps</div>
+                            ${row[4] ? `<div class="lb-taps-label" style="margin-top:2px;">${row[4]} play${row[4] === 1 ? '' : 's'}</div>` : ''}
                         </div>
                     </div>
                 `).join('');
